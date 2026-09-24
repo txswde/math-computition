@@ -1,39 +1,129 @@
-\section{问题二：LGN--皮层--头皮脑电生成模型}
+\section{问题二：LGN—皮层—头皮脑电生成模型}
 
-\subsection{建模目标}
+\subsection{建模目标与总体思路}
 
-问题二需要从“数据相关性”上升到“生成机制”：建立外界视觉刺激经LGN输入、皮层神经群体动力学到头皮F3/Fz/F4观测的低维计算模型，并解释左、右三角刺激产生不同脑电响应的机制。
+问题二需要从“左右刺激的观测差异”上升到“脑电差异的形成机制”。为避免把三通道EEG的逆问题误写成唯一神经源定位，本文采用\textbf{低维等效生成模型}：先将视觉三角形的方向和空间配置编码为LGN等效输入，再通过共享的皮层神经群体动力学产生潜在状态，最后经头皮观测矩阵生成F3、Fz、F4三通道EEG。模型参数由问题一得到的保真ERP约束，并通过留出曲线和左右差分进行验证。
 
-\subsection{模型结构}
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    node distance=0.9cm and 0.9cm,
+    box/.style={draw, rounded corners, align=center, minimum height=1.0cm, text width=2.8cm, fill=gray!6},
+    arrow/.style={-{Latex[length=2.2mm]}, thick}
+]
+\node[box] (stim) {左/右三角形\\方向与空间特征};
+\node[box, right=of stim] (lgn) {LGN等效输入\\$\bm u(t)$};
+\node[box, right=of lgn] (ctx) {皮层E/I神经群体\\状态$\bm z(t)$};
+\node[box, right=of ctx] (eeg) {头皮观测\\F3/Fz/F4};
+\draw[arrow] (stim)--(lgn);
+\draw[arrow] (lgn)--(ctx);
+\draw[arrow] (ctx)--(eeg);
+\end{tikzpicture}
+\caption{问题二低维生成模型框架}
+\label{fig:q2_framework}
+\end{figure}
 
-\TODO{补写模型结构图：视觉刺激编码 $\rightarrow$ LGN输入 $\rightarrow$ 皮层兴奋/抑制神经群体 $\rightarrow$ 头皮观测矩阵。}
+\subsection{视觉刺激的低维编码}
 
-建议采用统一状态空间形式：
+设左右三角刺激的类别为$c\in\{-1,+1\}$。根据题目给出的“特定空间方式排列的特征可激活特定神经元”这一提示，不将刺激仅编码为一个离散标签，而是构造包含方向、相对位置与共同视觉强度的特征向量
+\begin{equation}
+\bm q_c=
+\begin{bmatrix}
+q_{\mathrm{common}} &
+q_{\mathrm{direction}} &
+q_{\mathrm{position}}
+\end{bmatrix}^{\top}.
+\end{equation}
+经时间核$g(t)$形成LGN等效输入
+\begin{equation}
+\bm u_c(t)=B\,\bm q_c\,g(t-\tau_{\mathrm{LGN}}),
+\label{eq:q2_lgn_input}
+\end{equation}
+其中$B$控制不同视觉特征向皮层输入的投影，$\tau_{\mathrm{LGN}}$为等效传导延迟。
+
+\subsection{皮层兴奋/抑制神经群体动力学}
+
+为描述大量神经元的平均活动，采用共享参数的兴奋—抑制（E/I）神经群体状态
+\[
+\bm z(t)=
+\begin{bmatrix}
+E(t) & I(t)
+\end{bmatrix}^{\top},
+\]
+并预留如下连续时间动力学形式：
 \begin{align}
-\dot{\bm z}(t) &= F\!\left(\bm z(t),\bm u(t);\bm\theta\right),\\
-\bm y(t) &= H\bm z(t)+\bm\varepsilon(t),
+\tau_E\dot E(t)
+&=
+-E(t)+S_E\!\left(
+w_{EE}E(t)-w_{EI}I(t)+b_E+\bm b_E^\top\bm u(t)
+\right),\\
+\tau_I\dot I(t)
+&=
+-I(t)+S_I\!\left(
+w_{IE}E(t)-w_{II}I(t)+b_I+\bm b_I^\top\bm u(t)
+\right),
 \end{align}
-其中$\bm z(t)$为皮层等效神经状态，$\bm u(t)$为视觉/LGN输入，$H$为从隐状态到F3/Fz/F4的观测矩阵。
+其中$S_E(\cdot)$、$S_I(\cdot)$为有界非线性传递函数。该结构允许用少量参数描述刺激输入、局部兴奋和反馈抑制之间的竞争关系。
 
-\subsection{左右视觉刺激的差异编码}
+\PENDING{待第二问代码完成后，根据最终采用的Wilson--Cowan、线性化神经质量模型或其它模型替换本节方程，并填入实际参数范围。}
 
-\TODO{根据第二问实际程序确定：左右三角差异究竟由输入方向、相对位置配置、耦合权重还是空间观测映射表示。正文必须与代码一致，不先写结论。}
+\subsection{从皮层状态到头皮EEG的观测模型}
 
-\subsection{参数估计与模型求解}
+设三通道观测向量为
+\[
+\bm y(t)=
+\begin{bmatrix}
+y_{F3}(t)&y_{Fz}(t)&y_{F4}(t)
+\end{bmatrix}^{\top},
+\]
+采用低维线性观测关系
+\begin{equation}
+\bm y(t)=H\bm z(t)+\bm b+\bm\varepsilon(t),
+\label{eq:q2_observation}
+\end{equation}
+其中$H$为$3\times d$观测矩阵，综合反映潜在神经状态到三个头皮电极的体积传导和空间加权效应。由于本题只有三个EEG通道，$H$仅作为\textbf{等效传感器映射}解释，不将其反演为唯一脑区定位。
 
-\TODO{补充损失函数、参数约束、训练/验证划分、数值积分方法及初始化。}
+\subsection{左右刺激差异的形成与特征表示}
 
-\subsection{模型验证}
+在共享动力学参数和共享观测矩阵的前提下，左右刺激差异主要通过$\bm q_c$与$\bm u_c(t)$进入模型。由此可将共同响应和左右差分分别写为
+\begin{align}
+\bm y_{\mathrm{com}}(t)
+&=\frac{\bm y_{L}(t)+\bm y_{R}(t)}{2},\\
+\bm y_{\mathrm{diff}}(t)
+&=\bm y_{L}(t)-\bm y_{R}(t).
+\end{align}
 
-建议至少包含：
+本文计划从峰值、潜伏期、通道间相对幅值、状态轨迹投影以及模型输入系数等方面构造低维特征
+\begin{equation}
+\bm r
+=
+\Psi\!\left(
+\bm y(t),\bm z(t),\bm u(t)
+\right),
+\end{equation}
+并检验这些特征能否在留出数据上稳定区分左、右刺激。
+
+\subsection{参数估计与模型验证}
+
+参数估计不直接追求训练曲线的最小误差，而采用“ERP重建+左右差分+参数正则”的联合目标：
+\begin{equation}
+\mathcal L(\bm\theta)
+=
+\alpha\mathcal L_{\mathrm{ERP}}
++\beta\mathcal L_{\mathrm{diff}}
++\gamma\mathcal R(\bm\theta).
+\end{equation}
+其中$\mathcal L_{\mathrm{ERP}}$衡量F3/Fz/F4曲线重建误差，$\mathcal L_{\mathrm{diff}}$约束左右差分结构，$\mathcal R$限制参数落在合理范围。
+
+最终验证至少包含：
 \begin{enumerate}[label=(\arabic*)]
-    \item 对留出ERP曲线的时域重建误差；
-    \item 三电极空间模式的一致性；
-    \item 左右刺激差分的预测能力；
-    \item 参数扰动/敏感性分析；
-    \item 与简化基线模型的对比。
+    \item 留出ERP曲线的标准化RMSE和相关系数；
+    \item 三电极空间模式及共同响应的一致性；
+    \item 左右差分的预测与方向一致性；
+    \item 关键参数扰动和局部敏感性；
+    \item 去除刺激空间项、抑制反馈项或通道映射项后的消融比较。
 \end{enumerate}
 
 \subsection{问题二小结}
 
-\TODO{在第二问完成后，用“模型解释了什么、验证到了什么、不能声称什么”三句话收束。}
+本节框架的核心并非把三通道EEG反演为唯一的真实脑源，而是建立一套能够由刺激生成、可与真实ERP直接比较、且能解释左右差异来源的低维神经计算模型。\PENDING{待第二问执行完成后补入最终数值结果与机制结论。}
