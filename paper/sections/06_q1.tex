@@ -1,0 +1,163 @@
+\section{问题一：保真约束下的脑电降噪与视觉响应提取}
+
+\subsection{数据组织与事件对齐}
+
+本文以视觉刺激事件为时间零点，将连续脑电划分为刺激锁定试次。每个试次保留Fz、F3、F4三个通道，采样频率为
+\[
+f_s=256\,\mathrm{Hz}.
+\]
+根据现有程序，共得到400个刺激锁定试次，两个实验项目各200个。分析片段覆盖约刺激前$0.2\,\mathrm{s}$至刺激后$0.8\,\mathrm{s}$，并利用刺激前样本进行基线校正。
+
+为避免将实验项目与数学建模“问题一/问题二”混淆，后文将题目中的两类实验任务分别记作“实验项目I”和“实验项目II”。
+
+\subsection{基础保真预处理模型}
+
+\subsubsection{零相位带通滤波与基线校正}
+
+对第$i$个试次的原始信号$x_i(t)$，先进行$0.5$--$30\,\mathrm{Hz}$四阶Butterworth双向滤波，再做刺激前基线校正，得到基础参考信号
+\begin{equation}
+x_i^{(0)}(t)
+=
+\mathcal{B}_{0.5-30}[x_i(t)]
+-
+\frac{1}{|\mathcal T_0|}
+\sum_{\tau\in\mathcal T_0}
+\mathcal{B}_{0.5-30}[x_i(\tau)],
+\label{eq:p0}
+\end{equation}
+其中$\mathcal{B}_{0.5-30}$表示零相位带通算子，$\mathcal T_0$为刺激前基线区间。本文将式\eqref{eq:p0}记为基础处理$\Pzero$。
+
+该步骤用于抑制低频漂移及较高频噪声，同时避免相位延迟。由于题目数据未给出可靠的物理单位换算关系，本文后续幅值统一采用“记录单位”。
+
+\subsubsection{试次质量加权}
+
+为降低眨眼、运动及突发高幅值波动对平均ERP的影响，本文不直接删除试次，而是根据峰峰值、均方根、一阶差分MAD及异常幅值比例构造质量权重$w_i$。对条件$c$，加权ERP为
+\begin{equation}
+\bar{x}_c(t)
+=
+\frac{\sum_{i\in c} w_i x_i^{(0)}(t)}
+{\sum_{i\in c} w_i}.
+\label{eq:weighted_erp}
+\end{equation}
+
+同时定义有效样本量
+\begin{equation}
+N_{\mathrm{eff}}
+=
+\frac{\left(\sum_i w_i\right)^2}
+{\sum_i w_i^2},
+\label{eq:neff}
+\end{equation}
+用于判断加权结果是否过度依赖少量高权重试次。该质量加权方案记为$\Wzero$。
+
+\subsection{候选响应子空间与受约束平滑}
+
+将训练数据中稳定出现的共同响应和左右半差分响应堆叠后进行低维正交分解，取前$r$个方向组成矩阵$U$，并定义投影矩阵
+\begin{equation}
+P=UU^\top.
+\end{equation}
+
+为了尽量保留候选视觉响应子空间，而只对其正交补空间进行平滑，构造
+\begin{equation}
+\mathcal{D}_{r,\lambda}x
+=
+Px+(I-P)\widetilde S_\lambda x,
+\label{eq:subspace_denoise}
+\end{equation}
+其中
+\begin{equation}
+S_\lambda=(I+\lambda D_2^\top D_2)^{-1},
+\end{equation}
+$D_2$为二阶差分算子，$\lambda$控制平滑强度。
+
+本文在训练折内考察
+\[
+r\in\{0,2,4\},\qquad
+\lambda\in\{1,10,100\},
+\]
+并与$\Pzero$、$\Wzero$共同构成有限候选集。模型选择只使用训练折信息，以验证折ERP预测误差为准，避免在完整数据上观察曲线后再挑选最有利方法。
+
+\subsection{保真约束与模型选择}
+
+仅以输出“更平滑”作为降噪成功标准是不充分的。为检验算法是否同时损伤真实视觉响应，本文在原始片段入口注入已知波形，并将处理后的恢复结果与滤波前真值比较。
+
+定义峰值幅度相对误差
+\begin{equation}
+E_A=\frac{|\hat A-A|}{|A|},
+\end{equation}
+以及峰时偏移
+\begin{equation}
+E_t=|\hat t_p-t_p|.
+\end{equation}
+
+预设工程保真门槛为
+\[
+E_A\le 10\%,\qquad E_t\le 2\ \text{samples}.
+\]
+
+现有结果表明：对于宽共同响应，$\Pzero$和两个项目选出的学习型候选幅值误差均约为$8\%$；但对窄反对称响应，$\Pzero$幅值误差约为$2.08\%$，而两个学习型候选均约为$10.8\%$，超过预设保真阈值。因此，尽管学习型候选在部分稳定性指标上有所改善，本文仍选取$\Pzero$作为后续主分析信号，并将$\Wzero$用于稳健ERP辅助估计。
+
+\begin{table}[H]
+\centering
+\caption{主要候选方法的已知信号保真结果}
+\label{tab:q1_fidelity}
+\begin{tabular}{lccc}
+\toprule
+方法 & 宽共同峰幅值误差 & 窄反对称峰幅值误差 & 最大峰时偏移\\
+\midrule
+$\Pzero$ & 8.09\% & 2.08\% & 0\\
+项目I学习型候选 & 8.26\% & 10.80\% & 0\\
+项目II学习型候选 & 8.27\% & 10.81\% & 0\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{视觉诱发响应提取与稳定性检验}
+
+对每个实验项目、刺激条件和电极分别计算ERP，并进一步构造共同响应
+\begin{equation}
+m(t)=\frac{\bar{x}_{L}(t)+\bar{x}_{R}(t)}{2},
+\end{equation}
+以及左右差分响应
+\begin{equation}
+d(t)=\bar{x}_{L}(t)-\bar{x}_{R}(t).
+\end{equation}
+
+为避免事后挑选时间窗，主检验固定在$250$--$500\,\mathrm{ms}$晚期窗口。统计上采用记录内分块、双侧符号翻转检验及Holm多重比较校正，并通过移动块重采样给出条件性置信区间。
+
+现有结果显示，质量加权显著提高了共同ERP的分半一致性：实验项目I的平均分半相关系数由$\Pzero$的约$0.554$提高至$\Wzero$的约$0.785$，实验项目II由约$0.920$提高至约$0.985$；但左右差分响应的分半相关仍较低。因此，第一问能够较稳定地支持“共同视觉响应”的存在，而尚不能仅凭传统ERP平均证明稳定的左右形状差异。
+
+在固定晚期窗口中，实验项目II的Fz通道观察到较明显的共同诱发变化，但该效应对滤波及边界上下文存在敏感性。故本文将其表述为“晚期视觉诱发响应”，不直接认定为稳定正向P300。
+
+\subsection{响应曲线参数化拟合}
+
+为满足题目“拟合相应曲线”的要求，采用低阶高斯基函数描述ERP：
+\begin{equation}
+f_K(t)
+=
+b+\sum_{j=1}^{K}
+a_j
+\exp\left[
+-\frac{(t-\mu_j)^2}{2\sigma_j^2}
+\right],
+\qquad K\in\{0,1,2\}.
+\label{eq:gaussian_fit}
+\end{equation}
+
+其中$K=0$表示无明显峰型，$K=1$表示单峰响应，$K=2$表示早期与晚期双成分。模型阶数在开发数据内部选择，并通过分块重采样估计参数区间。
+
+现有12条“实验项目--刺激条件--电极”曲线中，4条选择常数模型、2条选择单高斯模型、6条选择双高斯模型。由于部分曲线参数达到约束边界，本文将高斯参数仅作为观测曲线的低维描述，不直接等价解释为确定的神经生理成分。
+
+% 若需要临时插入当前6页结果PDF的第一页，可取消下面注释：
+% \begin{figure}[H]
+% \centering
+% \includegraphics[page=1,width=0.95\textwidth]{q1_results.pdf}
+% \caption{问题一主要结果示意}
+% \label{fig:q1_results_preview}
+% \end{figure}
+
+\subsection{问题一小结}
+
+综上，本文建立了以“特征保真”为优先约束的脑电预处理框架。基础零相位带通滤波负责信号级保真，试次质量加权负责提高跨试次稳健性，候选子空间方法则通过训练折评价与人工注入实验接受约束选择。结果表明，复杂平滑方法并未在所有保真指标上优于基础模型，因此本文主动保留$\Pzero$作为后续问题的统一可比输入。
+
+问题一提取出的共同ERP、左右差分ERP以及参数化响应曲线，将作为问题二建立LGN--皮层--头皮生成模型的观测接口。
