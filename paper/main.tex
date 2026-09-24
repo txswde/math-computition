@@ -1,43 +1,30 @@
-\documentclass[UTF8,12pt,a4paper]{ctexart}
+% !Mode:: "TeX:UTF-8"
+%!TEX program = xelatex
 
-% =========================
-% 二十三届研究生数学建模竞赛 C 题论文框架
-% 建议使用 XeLaTeX 编译
-% =========================
+\documentclass[bwprint]{gmcmthesis}
 
-\usepackage[a4paper,left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm]{geometry}
-\usepackage{amsmath,amssymb,bm,mathtools}
-\usepackage{graphicx}
-\usepackage{booktabs,multirow,array,longtable,tabularx}
-\usepackage{float}
-\usepackage{caption,subcaption}
-\usepackage{enumitem}
+\hypersetup{hidelinks}
+
 \usepackage{siunitx}
-\usepackage{url}
-\usepackage[hidelinks]{hyperref}
-\usepackage{fancyhdr}
-\usepackage{titlesec}
-\usepackage{xcolor}
-\usepackage{setspace}
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta,positioning,shapes.geometric}
+\usepackage[noend]{algpseudocode}
+\usepackage{algorithmicx,algorithm}
+\floatname{algorithm}{算法}
+\renewcommand{\algorithmicrequire}{\textbf{输入:}}
+\renewcommand{\algorithmicensure}{\textbf{输出:}}
 
+% 第一问现有图位于仓库上一级目录
 \graphicspath{{figures/}{../first_answer/figures/}}
 
-\setstretch{1.25}
-\setlength{\parindent}{2em}
-\setlength{\parskip}{0pt}
-\captionsetup{font=small,labelsep=space}
-
-\pagestyle{fancy}
-\fancyhf{}
-\fancyhead[C]{2026年中国研究生数学建模竞赛 C 题}
-\fancyfoot[C]{\thepage}
-\renewcommand{\headrulewidth}{0.4pt}
-
-\titleformat{\section}{\centering\heiti\zihao{3}}{\thesection}{1em}{}
-\titleformat{\subsection}{\heiti\zihao{4}}{\thesubsection}{1em}{}
-\titleformat{\subsubsection}{\heiti\zihao{-4}}{\thesubsubsection}{1em}{}
+% ====================== 参赛信息 ======================
+\title{服务于脑机接口与精神性疾病诊断的脑电图计算模型}
+\baominghao{\hspace{6em} 待填写}
+\schoolname{\hspace{5.8em} 待填写}
+\membera{\hspace{6em} 乔逸帆}
+\memberb{\hspace{6em} 王佳兴}
+\memberc{\hspace{6em} 杨凯}
+% =====================================================
 
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\EEG}{\mathrm{EEG}}
@@ -49,28 +36,25 @@
 
 \begin{document}
 
-\begin{center}
-    {\heiti\zihao{2}\textbf{服务于脑机接口与精神性疾病诊断的脑电图计算模型}}\\[1.2em]
-\end{center}
+% 生成封面与标题页
+\maketitle
 
+% 摘要
 \input{sections/01_abstract}
 
-\newpage
-\tableofcontents
-\newpage
+\pagestyle{plain}
 
+% 按参考模板与上一届优秀论文结构组织正文：
+% 一 问题重述 → 二 模型的假设 → 三 问题分析 → 四 符号说明
+% → 五 模型的建立与求解 → 六 模型评价 → 七 结论
 \input{sections/02_problem}
 \input{sections/03_assumptions}
-\input{sections/04_symbols}
 \input{sections/05_analysis}
-\input{sections/06_q1}
-\input{sections/07_q2}
-\input{sections/08_q3}
+\input{sections/04_symbols}
+\input{sections/06_models}
 \input{sections/09_evaluation}
 \input{sections/10_conclusion}
 \input{sections/11_references}
-
-\appendix
 \input{sections/12_appendix}
 
 \end{document}
