@@ -1,0 +1,6 @@
+{
+  "slow": "30 Hz lowpass plus baseline; deliberately no fitted drift regression, so residual slow drift remains a confound.",
+  "padding": "Same 0.5-30 Hz P0 filter on larger disjoint raw trial partitions; only boundary context changes.",
+  "p_values": "Secondary conditional tests, Holm within each 12-test branch only; do not select the branch with the lowest p.",
+  "common_random_numbers": "P0 is repeated with the same sensitivity seed as other branches; small Monte Carlo p variation vs primary is expected."
+}

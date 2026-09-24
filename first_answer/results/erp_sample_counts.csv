@@ -1,0 +1,13 @@
+﻿task,condition,method,n,effective_n,scope,coverage
+1,-1,P0,102,102,descriptive_all_crossfit,1
+1,1,P0,98,98,descriptive_all_crossfit,1
+1,-1,W0,102,89.488840452286723,descriptive_all_crossfit,1
+1,1,W0,98,89.844839435779051,descriptive_all_crossfit,1
+1,-1,SELECTED,102,97.859269771000228,descriptive_all_crossfit,1
+1,1,SELECTED,98,93.964963276903944,descriptive_all_crossfit,1
+2,-1,P0,107,107,descriptive_all_crossfit,1
+2,1,P0,93,93,descriptive_all_crossfit,1
+2,-1,W0,107,97.328927780418695,descriptive_all_crossfit,1
+2,1,W0,93,88.153175709351942,descriptive_all_crossfit,1
+2,-1,SELECTED,107,97.332844188395285,descriptive_all_crossfit,1
+2,1,SELECTED,93,90.117838492145054,descriptive_all_crossfit,1

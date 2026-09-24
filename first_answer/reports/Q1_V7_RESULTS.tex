@@ -1,0 +1,167 @@
+% !TeX program = xelatex
+% Stage report, not the final competition manuscript. Compile from reports/.
+\documentclass[UTF8,a4paper,11pt,fontset=fandol]{ctexart}
+\usepackage[margin=2.3cm]{geometry}
+\usepackage{amsmath,amssymb,booktabs,longtable,enumitem,pdfpages}
+\usepackage[hidelinks]{hyperref}
+\setlist{itemsep=.2em,topsep=.3em}
+\title{C题第一问：v7.1执行结果与验收资料}
+\author{}
+\date{2026年9月23日}
+\begin{document}
+\maketitle
+\section{范围与结论}
+本批完成E0接口检查和E1第一问：400试次、11个有限候选、训练折内选择、注入保真、人工伪迹权衡、独立分半、12条条件曲线拟合及共同/差分检验。12项测试通过，27个数值CSV完整复跑哈希一致，79个原始或历史文件保持不变。
+
+实现与资料包已完成，\textbf{但新增平滑未通过窄峰保真门槛，稳定P300也未得到确认}。P0仅作为后续可比参考，不能称无损真值。本文件不是第二、三问的v7结果，也不是最终竞赛论文。
+
+\section{数据与评价协议}
+四份记录各100试次，使用Fz、F3、F4，采样率256 Hz。时间点为$t_k=k/256$，$k=-51,\ldots,204$；刺激前51点去基线。幅值保持记录单位，不擅自换算为$\mu\mathrm V$。每记录前80次开发、后20次历史测试，共320/80次；开发集按四个连续20试次块作外折验证，内折选择权重/子空间/平滑参数。历史测试早已查看，不称新盲测。
+
+P0为带填充逐试次四阶Butterworth 0.5--30 Hz双向滤波及基线校正；与v6复算最大差为$4.55\times10^{-13}$。零相位滤波为离线方法，不据此报告在线因果潜伏期。流程记录与事件锁定遵循可重复性规范\cite{pernet2020cobidas}；选窗和选择偏差控制参考\cite{luck2017erp,kriegeskorte2009circular}。
+
+\section{模型与求解}
+\subsection{质量加权与候选子空间约束平滑}
+以原始坐标的峰峰值、RMS、一阶差分MAD和幅值越界比例构造质量特征。前三项log1p后按训练中位数/MAD标准化，超过两个稳健尺度的部分平方降权，越界比例另行惩罚，权重下限0.01。999阈值仅为筛查规则，不是已知硬件饱和阈值。
+\[
+\widehat s(t)=\frac{\sum_iw_ix_i(t)}{\sum_iw_i},\qquad
+N_{\mathrm{eff}}=\frac{(\sum_iw_i)^2}{\sum_iw_i^2}.
+\]
+W0仅增加质量权重。训练数据按记录内10试次块构造共同和半差分响应，取前$r$个正交方向组成$U$，并令
+\[
+P=UU^T,\quad S_\lambda=(I+\lambda D_2^TD_2)^{-1},\quad
+\mathcal D x=Px+(I-P)\widetilde S_\lambda x.
+\]
+$\widetilde S_\lambda$包含逐通道平滑后的基线校正；$r\in\{0,2,4\}$，$\lambda\in\{1,10,100\}$。连同P0/W0共11个候选。内折以训练条件均值对未加权验证P0均值的标准化预测误差选择。
+
+线性EEG组合有成熟方法基础\cite{parra2005linear}，但$U$仍可能包含噪声、遗漏真实特征。因此$U^T\mathcal D x=U^Tx$只作实现检查，不是保护全部形状特征的证明。
+
+\subsection{曲线参数化}
+\[
+f_K(t)=b+\sum_{j=1}^{K}a_j\exp\left[-\frac{(t-\mu_j)^2}{2\sigma_j^2}\right],
+\qquad K\in\{0,1,2\}.
+\]
+$K$由开发集四折选择。单高斯中心250--500 ms；双高斯中心50--250 ms和250--500 ms；宽度15--200 ms。幅值可正可负。使用5起点有界最小二乘，每次最多300次函数评价。100次记录内块重采样得到固定处理算子及固定$K$的条件区间，不涵盖选择不确定性。
+
+\section{保真与预测结果}
+\begin{center}
+\begin{tabular}{lrrr}
+\toprule
+方法 & 宽峰幅值偏差 & 窄峰幅值偏差 & 最大峰时偏移\\
+\midrule
+P0 & 8.094\% & 2.080\% & 0点\\
+Task-1：U0\_L100 & 8.261\% & 10.805\% & 0点\\
+Task-2：U2\_L100 & 8.266\% & 10.807\% & 0点\\
+\bottomrule
+\end{tabular}
+\end{center}
+幅值偏差取三个非零通道的最大值，以滤波前注入真值为准。预设门槛为幅值偏差不超过10\%、峰时偏移不超过2点（7.8125 ms）。两候选因窄峰损伤未通过，默认保留P0。P0对慢共同波的幅值偏差仍为27.32\%，不能称无损。
+
+另外测试延迟峰、双相波、振荡波、子空间外及混合方向，不能只报告通过的波形。真实背景中注入眨眼样、肌电样、阶跃样人工伪迹；部分重加权残差能量增大。人工伪迹去除率不是实际记录的真实去除率。
+
+\begin{center}
+\begin{tabular}{lrrr}
+\toprule
+开发集外折ERP标准化RMSE & P0 & W0 & SELECTED\\
+\midrule
+Task-1 & 0.293355 & 0.273879 & 0.295448\\
+Task-2 & 0.265533 & 0.256808 & 0.265324\\
+\bottomrule
+\end{tabular}
+\end{center}
+W0平均误差较小，但尚未证明改善具有推断意义。SELECTED表示各训练折内选择的候选，无稳定外折收益；不得用历史测试段更好的数值重新选参。
+
+\begin{center}
+\begin{tabular}{lrrr}
+\toprule
+20次独立分半平均相关 & P0 & W0 & SELECTED\\
+\midrule
+Task-1共同 & 0.554 & 0.785 & 0.707\\
+Task-1差分 & -0.301 & -0.176 & -0.140\\
+Task-2共同 & 0.920 & 0.985 & 0.973\\
+Task-2差分 & -0.184 & -0.294 & -0.313\\
+\bottomrule
+\end{tabular}
+\end{center}
+每次两半独立拟合全部选择步骤；表中对重复及电极平均。共同稳定不证明左右可区分，也不能排除共同伪迹。全部400试次保留，W0有效样本数各任务/条件为88.15--97.33。
+
+\section{共同响应与左右差异分开检验}
+固定P0和250--500 ms，不看结果重新选窗。在记录内10试次块定义
+\[
+m_b=\frac{\bar a_{L,b}+\bar a_{R,b}}{2},\qquad d_b=\bar a_{L,b}-\bar a_{R,b}.
+\]
+分别对$m_b$和$d_b$作对零的单样本对比；后者等价于同块条件均值配对对比，不将任意左右试次配对。采用999次学生化双侧符号翻转，12项Holm校正，500次记录内移动块重采样。p值以块级独立/符号可交换性为条件；偏斜、趋势和相关诊断不能证明这些假设成立。
+
+\begin{center}
+\begin{tabular}{lrrrr}
+\toprule
+任务/电极 & 共同效应 & Holm $p$ & 左减右效应 & Holm $p$\\
+\midrule
+1/Fz & -15.607 & 1.000 & -47.259 & 1.000\\
+1/F3 & -5.609 & 1.000 & -5.488 & 1.000\\
+1/F4 & -1.401 & 1.000 & 1.774 & 1.000\\
+2/Fz & -22.630 & 0.012 & 4.812 & 1.000\\
+2/F3 & 17.383 & 1.000 & -12.886 & 1.000\\
+2/F4 & -12.444 & 1.000 & -30.263 & 1.000\\
+\bottomrule
+\end{tabular}
+\end{center}
+Task-2/Fz主共同效应区间为$[-28.596,-16.331]$记录单位。它是负向变化，不能认证正P300；两类平均显著也不说明每类分别显著。其余检验不显著不等于证明无效应。区间未经12项联合校正且零分布构造不同，不能仅挑选不跨零的区间宣称差异。
+
+\section{敏感性与参数可解释边界}
+\begin{center}
+\begin{tabular}{lrr}
+\toprule
+Task-2/Fz共同响应 & 效应 & 分支内Holm $p$\\
+\midrule
+P0 & -22.630 & 0.012\\
+仅30 Hz低通加基线 & 40.706 & 0.036\\
+P0扩大隔离填充 & -15.035 & 0.132\\
+\bottomrule
+\end{tabular}
+\end{center}
+效应方向随滤波改变，扩大填充后校正显著性消失。仅低通没有去除慢漂移，其正响应也不能直接解释为P300。5/10/20试次块下效应分别为$-24.300/-22.630/-22.106$，但5试次分支缺类块仅纳入175次，5/20分支有假设诊断警告。上述分析用于揭示依赖，不用于挑最小p。
+
+12条最终曲线全部收敛；4条$K=0$、2条$K=1$、6条$K=2$，6条触边。54个参数及区间保存在配套CSV，不将常数模型强补为峰。训练与历史误差见下表，单位均为记录单位。
+\begin{center}
+\begin{tabular}{lrrrr}
+\toprule
+任务/条件/电极 & $K$ & 触边 & 训练RMSE & 历史RMSE\\
+\midrule
+1/左/Fz & 0 & 否 & 10.699 & 30.660\\
+1/左/F3 & 0 & 否 & 4.271 & 8.938\\
+1/左/F4 & 0 & 否 & 6.629 & 12.820\\
+1/右/Fz & 1 & 是 & 3.393 & 35.614\\
+1/右/F3 & 2 & 是 & 1.336 & 4.398\\
+1/右/F4 & 0 & 否 & 7.104 & 10.345\\
+2/左/Fz & 2 & 是 & 3.119 & 7.653\\
+2/左/F3 & 1 & 是 & 12.578 & 25.175\\
+2/左/F4 & 2 & 是 & 4.240 & 48.412\\
+2/右/Fz & 2 & 是 & 3.058 & 12.714\\
+2/右/F3 & 2 & 否 & 4.916 & 23.855\\
+2/右/F4 & 2 & 否 & 11.344 & 16.914\\
+\bottomrule
+\end{tabular}
+\end{center}
+固定模型的1200次参数重采样均收敛，但触边及幅值区间跨零时不作精确生理峰解释。完整数据位置为\path{../results/v7_modeling/q1/gaussian_parameters.csv}，目录清单为\path{../results/v7_modeling/q1/package_manifest.json}。
+
+\section{复现及下一步}
+固定种子20260925，Python 3.9.13、NumPy 1.26.4、SciPy 1.13.1、Pandas 1.4.4、Matplotlib 3.5.2，CPU线程1。项目根目录运行：
+\begin{verbatim}
+python -m pytest code/test_q1_v7.py -q
+python code/run_q1_v7.py --stage all
+python code/q1_v7_deliver.py
+python code/verify_q1_v7.py
+\end{verbatim}
+这里all只指第一问。12项测试及27个CSV复现通过，79个原始/历史文件未变；六页图已渲染检查。本机无XeLaTeX，本报告只做源文件静态检查，未生成报告编译PDF。附录数据图由Matplotlib直接生成。
+
+下一批为第二问E2/E3：方向与相对位置配置、共享参数E/I群体、三电极生成、共同与差分分列验证。默认P0可比参考不等于唯一正确预处理，须保留固定敏感性。第三问v7和最终论文仍待实施；未知行为正确性、物理单位及A/B身份不通过程序假定填补。
+
+\bibliographystyle{unsrt}
+\bibliography{../references/c_problem_references}
+\clearpage
+\appendix
+\section{完整数据图表}
+后附六页依次为条件ERP、任务1拟合、任务2拟合、注入及人工伪迹、共同/差分与稳定性、预处理敏感性。图表展示完整结果，不以漂亮波形代替独立验证。
+\includepdf[pages=-,fitpaper=true]{../figures/v7_modeling/q1_results.pdf}
+\end{document}

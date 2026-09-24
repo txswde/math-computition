@@ -1,0 +1,26 @@
+{
+  "trials": 400,
+  "development_trials": 320,
+  "historical_test_trials": 80,
+  "channels": [
+    "Fz",
+    "F3",
+    "F4"
+  ],
+  "unit": "recording units; physical conversion unavailable",
+  "fs_hz": 256,
+  "v6_filter_reproduction_max_abs_error": 4.547473508864641e-13,
+  "quality_coordinates_match_v6": true,
+  "candidate_count": 11,
+  "raw_and_historical_file_count": 79,
+  "unavailable_correctness_is_not_imputed": true,
+  "padding_note": "P0 retained as frozen historical baseline; larger disjoint raw partitions are a sensitivity branch, not chosen by significance.",
+  "python": "3.9.13",
+  "packages": {
+    "numpy": "1.26.4",
+    "scipy": "1.13.1",
+    "pandas": "1.4.4",
+    "matplotlib": "3.5.2"
+  },
+  "elapsed_s": 0.8748003999999998
+}

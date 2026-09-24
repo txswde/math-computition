@@ -1,0 +1,37 @@
+{
+  "latex": [
+    {
+      "path": "reports\\Q1_V7_RESULTS.tex",
+      "brace_pairs": 79,
+      "environments_balanced": true,
+      "citation_keys": [
+        "kriegeskorte2009circular",
+        "luck2017erp",
+        "parra2005linear",
+        "pernet2020cobidas"
+      ],
+      "compiled": false
+    },
+    {
+      "path": "reports\\V7_MODELING_OUTLINE.tex",
+      "brace_pairs": 118,
+      "environments_balanced": true,
+      "citation_keys": [],
+      "compiled": false
+    }
+  ],
+  "xelatex_available": false,
+  "local_links_checked": 33,
+  "parameter_count": 54,
+  "report_primary_effects_and_prediction_rounding_match": true,
+  "pdf": {
+    "pages": 6,
+    "hash_matches_manifest": true,
+    "rendered_pages": 6,
+    "visual_review": "All six 110-dpi renders inspected by the authoring agent; no clipped labels or page overflow observed."
+  },
+  "protected": {
+    "protected_files": 79,
+    "all_unchanged": true
+  }
+}

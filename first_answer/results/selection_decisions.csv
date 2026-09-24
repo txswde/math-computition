@@ -1,0 +1,11 @@
+﻿task,partition,selected,rank,lambda,n_train,n_test
+1,outer_0,P0,0,0,120,40
+1,outer_1,P0,0,0,120,40
+1,outer_2,U0_L100,0,100,120,40
+1,outer_3,U0_L100,0,100,120,40
+1,historical,U0_L100,0,100,160,40
+2,outer_0,P0,0,0,120,40
+2,outer_1,U0_L100,0,100,120,40
+2,outer_2,U0_L100,0,100,120,40
+2,outer_3,U2_L100,2,100,120,40
+2,historical,U2_L100,2,100,160,40

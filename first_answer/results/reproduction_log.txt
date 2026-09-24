@@ -1,0 +1,29 @@
+{"stage": "E0", "trials": 400, "candidates": 11, "protected_files": 79, "elapsed_s": 0.8748003999999998}
+Q1 task=1 partition=outer_0 selected=P0
+Q1 task=1 partition=outer_1 selected=P0
+Q1 task=1 partition=outer_2 selected=U0_L100
+Q1 task=1 partition=outer_3 selected=U0_L100
+Q1 task=1 partition=historical selected=U0_L100
+Q1 task=2 partition=outer_0 selected=P0
+Q1 task=2 partition=outer_1 selected=U0_L100
+Q1 task=2 partition=outer_2 selected=U0_L100
+Q1 task=2 partition=outer_3 selected=U2_L100
+Q1 task=2 partition=historical selected=U2_L100
+Q1 primary response tests: [{'task': 1, 'channel': 'F3', 'contrast': 'common', 'effect': -5.608740104349049, 'p_holm_conditional': 1.0, 'assumption_warning': True}, {'task': 1, 'channel': 'F3', 'contrast': 'difference', 'effect': -5.487835608391964, 'p_holm_conditional': 1.0, 'assumption_warning': False}, {'task': 1, 'channel': 'F4', 'contrast': 'common', 'effect': -1.4006565576339454, 'p_holm_conditional': 1.0, 'assumption_warning': True}, {'task': 1, 'channel': 'F4', 'contrast': 'difference', 'effect': 1.773897793949806, 'p_holm_conditional': 1.0, 'assumption_warning': True}, {'task': 1, 'channel': 'Fz', 'contrast': 'common', 'effect': -15.606851957754605, 'p_holm_conditional': 1.0, 'assumption_warning': True}, {'task': 1, 'channel': 'Fz', 'contrast': 'difference', 'effect': -47.25903031608297, 'p_holm_conditional': 1.0, 'assumption_warning': True}, {'task': 2, 'channel': 'F3', 'contrast': 'common', 'effect': 17.383405094731632, 'p_holm_conditional': 1.0, 'assumption_warning': True}, {'task': 2, 'channel': 'F3', 'contrast': 'difference', 'effect': -12.885559489252078, 'p_holm_conditional': 1.0, 'assumption_warning': True}, {'task': 2, 'channel': 'F4', 'contrast': 'common', 'effect': -12.443660850581347, 'p_holm_conditional': 1.0, 'assumption_warning': True}, {'task': 2, 'channel': 'F4', 'contrast': 'difference', 'effect': -30.26253956740435, 'p_holm_conditional': 1.0, 'assumption_warning': True}, {'task': 2, 'channel': 'Fz', 'contrast': 'common', 'effect': -22.629989780860207, 'p_holm_conditional': 0.012, 'assumption_warning': False}, {'task': 2, 'channel': 'Fz', 'contrast': 'difference', 'effect': 4.8116930802908255, 'p_holm_conditional': 1.0, 'assumption_warning': False}]
+Q1 task=1 independent-half fits complete
+Q1 task=2 independent-half fits complete
+Q1 task=1 raw-entry recovery and artifact tradeoffs complete
+Q1 task=2 raw-entry recovery and artifact tradeoffs complete
+Q1 curve task=1 shape=-1 Fz: K=0, boundary=False
+Q1 curve task=1 shape=-1 F3: K=0, boundary=False
+Q1 curve task=1 shape=-1 F4: K=0, boundary=False
+Q1 curve task=1 shape=1 Fz: K=1, boundary=True
+Q1 curve task=1 shape=1 F3: K=2, boundary=True
+Q1 curve task=1 shape=1 F4: K=0, boundary=False
+Q1 curve task=2 shape=-1 Fz: K=2, boundary=True
+Q1 curve task=2 shape=-1 F3: K=1, boundary=True
+Q1 curve task=2 shape=-1 F4: K=2, boundary=True
+Q1 curve task=2 shape=1 Fz: K=2, boundary=True
+Q1 curve task=2 shape=1 F3: K=2, boundary=False
+Q1 curve task=2 shape=1 F4: K=2, boundary=False
+{'protected_files': 79, 'all_unchanged': True, 'stage': 'all', 'elapsed_s': 18.2075475}

@@ -1,0 +1,11 @@
+{
+  "methods": {
+    "1": "P0",
+    "2": "P0"
+  },
+  "development_scope": "fitted on all development data, descriptive only, not OOF",
+  "historical_scope": "parameters trained only on original development; historical scores already inspected in prior versions",
+  "for_Q2_Q3": "Use P0 raw/cache and refit all learned Q1 steps inside downstream training folds. Do not use this all-development fitted archive as an independent OOF benchmark.",
+  "gaussian_ci": "100 block bootstraps with fixed operator, weights and chosen K; one warm start per replicate; conditional intervals, not full selection uncertainty.",
+  "gaussian_boundary": "A boundary or amplitude interval spanning zero prevents a precise physiological peak interpretation."
+}

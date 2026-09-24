@@ -1,0 +1,16 @@
+[
+  {
+    "task": 1,
+    "selected_by_training_prediction": "U0_L100",
+    "broad_narrow_absolute_fidelity_pass": false,
+    "provisional_downstream_interface": "P0",
+    "note": "Gate is a limited known-wave engineering check, not proof of preservation of all EEG features. If failed, retain P0; candidate results remain reported."
+  },
+  {
+    "task": 2,
+    "selected_by_training_prediction": "U2_L100",
+    "broad_narrow_absolute_fidelity_pass": false,
+    "provisional_downstream_interface": "P0",
+    "note": "Gate is a limited known-wave engineering check, not proof of preservation of all EEG features. If failed, retain P0; candidate results remain reported."
+  }
+]

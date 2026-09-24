@@ -1,0 +1,62 @@
+{
+  "version": "v7.1-q1",
+  "seed": 20260925,
+  "output_dir": "results/v7_modeling/q1",
+  "figure_dir": "figures/v7_modeling",
+  "channels": [
+    "Fz",
+    "F3",
+    "F4"
+  ],
+  "fs": 256,
+  "baseline_s": [
+    -0.2,
+    0.0
+  ],
+  "score_window_s": [
+    0.0,
+    0.8
+  ],
+  "late_window_s": [
+    0.25,
+    0.5
+  ],
+  "early_window_s": [
+    0.05,
+    0.25
+  ],
+  "basis_block_trials": 10,
+  "ranks": [
+    0,
+    2,
+    4
+  ],
+  "smoothing_lambdas": [
+    1.0,
+    10.0,
+    100.0
+  ],
+  "bootstrap_repeats": 500,
+  "parameter_bootstrap_repeats": 100,
+  "split_half_repeats": 20,
+  "sign_flip_repeats": 999,
+  "stat_block_sizes": [
+    10,
+    5,
+    20
+  ],
+  "gaussian_starts": 5,
+  "gaussian_max_nfev": 300,
+  "gaussian_tolerance": 1e-06,
+  "curve_complexity": [
+    0,
+    1,
+    2
+  ],
+  "injection_amplitude_tolerance": 0.1,
+  "injection_peak_tolerance_samples": 2,
+  "protocol": "Retrospective development-block validation; the historical 80 trials are not a new blind test. No classification target.",
+  "selection": "Training-only rank/lambda/quality selection by blocked prediction of unweighted P0 condition means, equal channel scaling fitted on training data.",
+  "slow_branch": "30 Hz lowpass and prestimulus baseline only; no fitted drift removal in Q1.",
+  "statistics": "Fixed P0; task-separated record-local blocks, equal-weight common and left-minus-right contrasts; conditional sign flips and Holm across 12 primary tests."
+}

@@ -1,0 +1,64 @@
+{
+  "primary_family_n": 12,
+  "primary_block_trials": 10,
+  "two_sided": true,
+  "window_s": [
+    0.25,
+    0.5
+  ],
+  "missing_condition_blocks": [
+    {
+      "block_size": 5,
+      "record_id": "A_Task-1",
+      "block": 7,
+      "n": 5
+    },
+    {
+      "block_size": 5,
+      "record_id": "A_Task-1",
+      "block": 17,
+      "n": 5
+    },
+    {
+      "block_size": 5,
+      "record_id": "A_Task-2",
+      "block": 8,
+      "n": 5
+    },
+    {
+      "block_size": 5,
+      "record_id": "A_Task-2",
+      "block": 11,
+      "n": 5
+    },
+    {
+      "block_size": 5,
+      "record_id": "A_Task-2",
+      "block": 19,
+      "n": 5
+    },
+    {
+      "block_size": 5,
+      "record_id": "B_Task-1",
+      "block": 4,
+      "n": 5
+    },
+    {
+      "block_size": 5,
+      "record_id": "B_Task-2",
+      "block": 2,
+      "n": 5
+    },
+    {
+      "block_size": 5,
+      "record_id": "B_Task-2",
+      "block": 11,
+      "n": 5
+    }
+  ],
+  "primary_target": "fixed P0; no learned subspace or peak-window selection",
+  "bootstrap_note": "500 circular moving-block resamples of adjacent block means within each record; pointwise not simultaneous intervals.",
+  "assumption_note": "All p-values are conditional on independent sign-exchangeable block contrasts. Diagnostics cannot prove these assumptions.",
+  "warning_rule": "Diagnostic only: any record abs(lag1)>0.4, abs(skew)>1, or Spearman trend p<0.05. Not a validated assumption-selection test.",
+  "interpretation": "Average nonzero does not prove both classes respond, a P300 generator, or population generalization."
+}
