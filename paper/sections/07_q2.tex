@@ -1,0 +1,39 @@
+\section{问题二：LGN--皮层--头皮脑电生成模型}
+
+\subsection{建模目标}
+
+问题二需要从“数据相关性”上升到“生成机制”：建立外界视觉刺激经LGN输入、皮层神经群体动力学到头皮F3/Fz/F4观测的低维计算模型，并解释左、右三角刺激产生不同脑电响应的机制。
+
+\subsection{模型结构}
+
+\TODO{补写模型结构图：视觉刺激编码 $\rightarrow$ LGN输入 $\rightarrow$ 皮层兴奋/抑制神经群体 $\rightarrow$ 头皮观测矩阵。}
+
+建议采用统一状态空间形式：
+\begin{align}
+\dot{\bm z}(t) &= F\!\left(\bm z(t),\bm u(t);\bm\theta\right),\\
+\bm y(t) &= H\bm z(t)+\bm\varepsilon(t),
+\end{align}
+其中$\bm z(t)$为皮层等效神经状态，$\bm u(t)$为视觉/LGN输入，$H$为从隐状态到F3/Fz/F4的观测矩阵。
+
+\subsection{左右视觉刺激的差异编码}
+
+\TODO{根据第二问实际程序确定：左右三角差异究竟由输入方向、相对位置配置、耦合权重还是空间观测映射表示。正文必须与代码一致，不先写结论。}
+
+\subsection{参数估计与模型求解}
+
+\TODO{补充损失函数、参数约束、训练/验证划分、数值积分方法及初始化。}
+
+\subsection{模型验证}
+
+建议至少包含：
+\begin{enumerate}[label=(\arabic*)]
+    \item 对留出ERP曲线的时域重建误差；
+    \item 三电极空间模式的一致性；
+    \item 左右刺激差分的预测能力；
+    \item 参数扰动/敏感性分析；
+    \item 与简化基线模型的对比。
+\end{enumerate}
+
+\subsection{问题二小结}
+
+\TODO{在第二问完成后，用“模型解释了什么、验证到了什么、不能声称什么”三句话收束。}
