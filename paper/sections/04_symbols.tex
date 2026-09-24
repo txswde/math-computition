@@ -1,0 +1,24 @@
+\section{符号说明}
+
+\begin{table}[H]
+\centering
+\caption{主要符号及含义}
+\begin{tabular}{cl}
+\toprule
+符号 & 含义\\
+\midrule
+$x_i^{(e)}(t)$ & 第$i$个试次、电极$e$在时刻$t$的脑电观测\\
+$f_s$ & 采样频率，本文数据为$256\,\mathrm{Hz}$\\
+$\mathcal{T}_0$ & 刺激前基线时间窗\\
+$w_i$ & 第$i$个试次的质量权重\\
+$N_{\mathrm{eff}}$ & 加权后的有效样本量\\
+$U$ & 候选视觉响应子空间的正交基\\
+$P=UU^\top$ & 候选响应子空间投影矩阵\\
+$S_\lambda$ & 正则化平滑算子\\
+$\bar{x}_{c}^{(e)}(t)$ & 条件$c$下电极$e$的平均事件相关响应\\
+$f_K(t)$ & 含$K$个高斯成分的参数化响应曲线\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\TODO{随问题二、三建模过程补充状态变量、耦合参数、观测矩阵等符号。}
