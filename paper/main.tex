@@ -8,7 +8,7 @@
 \usepackage[a4paper,left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm]{geometry}
 \usepackage{amsmath,amssymb,bm,mathtools}
 \usepackage{graphicx}
-\usepackage{booktabs,multirow,array,longtable}
+\usepackage{booktabs,multirow,array,longtable,tabularx}
 \usepackage{float}
 \usepackage{caption,subcaption}
 \usepackage{enumitem}
@@ -19,12 +19,15 @@
 \usepackage{titlesec}
 \usepackage{xcolor}
 \usepackage{setspace}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric}
 
 \graphicspath{{figures/}{../first_answer/figures/}}
 
 \setstretch{1.25}
 \setlength{\parindent}{2em}
 \setlength{\parskip}{0pt}
+\captionsetup{font=small,labelsep=space}
 
 \pagestyle{fancy}
 \fancyhf{}
@@ -41,7 +44,8 @@
 \newcommand{\ERP}{\mathrm{ERP}}
 \newcommand{\Pzero}{\mathrm{P0}}
 \newcommand{\Wzero}{\mathrm{W0}}
-\newcommand{\TODO}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}
+\newcommand{\TODO}[1]{\textcolor{red!70!black}{\textbf{[TODO: #1]}}}
+\newcommand{\PENDING}[1]{\textcolor{gray}{\textbf{[待定稿：#1]}}}
 
 \begin{document}
 
